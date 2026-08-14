@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket</title>
+    <title>WebSocket Chat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <input id="input" placeholder="Write a text...">
-    <button id="send"> Send </button>
-    <script src="chat.js"> </script> 
+    <div id="parent">
+        <input class="username" placeholder="Username">
+        <input class="room" placeholder="Room ID">
+        <button class="join"> Join </button><br><br>
+        <input class="input" placeholder="Write a text...">
+        <button class="send"> Send </button>
+    </div>
+    <script src="client.js"> </script> 
 </body>
 </html>
