@@ -1,31 +1,29 @@
-const parent = document.querySelector("#parent");
-const usernameInput = document.querySelector(".username");
-const roomInput = document.querySelector(".room");
-const join = document.querySelector(".join");
-const input = document.querySelector(".input");
+const textInput = document.querySelector(".text");
+const leave = document.querySelector(".leave");
 const send = document.querySelector(".send");
+const socket = new WebSocket('ws://127.0.0.1:2021');
 
-join.addEventListener("click", () => {
-    const socket = new WebSocket('ws://127.0.0.1:2021');
-
-    socket.onopen = () => {
-        console.log("Connected to the Server");
-        socket.send(JSON.stringify({
-            roomId: roomInput.value.trim() || "Public",
-            username: usernameInput.value.trim() || "Anonymous"
-        }));
-    };
-    socket.onmessage = (msg) => {
-        const parsed = JSON.parse(msg.data);
-        console.log(`${parsed.username}: ${parsed.msg}`);
-    };
-
-    send.addEventListener("click", () => {
-        if (input.value) {
-            socket.send(JSON.stringify({msg: input.value.trim()}));
-            console.log(`You: ${input.value.trim()}`);
-            input.value = "";   
-        };
+socket.onopen = () => {
+    leave.addEventListener("click", () => {
+        socket.close();
+        window.location.href = "http://127.0.0.1:5090/landing";
     });
-    socket.onclose = () => {throw new Error("Server Closed")};
-})
+};
+socket.onmessage = (msg) => {
+    const parsed = JSON.parse(msg.data);
+    if (parsed.msg) {
+        console.log(`${parsed.username}: ${parsed.msg}`);
+    }
+    else if (parsed.username && parsed.roomId) { 
+        console.log(`Username: ${parsed.username} | Room: ${parsed.roomId}`);
+    }
+};
+
+send.addEventListener("click", () => {
+    if (textInput.value) {
+        socket.send(JSON.stringify({msg: textInput.value.trim()}));
+        console.log(`You: ${textInput.value.trim()}`);
+        textInput.value = "";   
+    };
+});
+socket.onclose = () => {throw new Error("Connection Closed")};
