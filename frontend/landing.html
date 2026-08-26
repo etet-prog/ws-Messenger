@@ -8,17 +8,18 @@
 </head>
 <body>
     <div class="parent">
-        <h1 class="title"> Welcome </h1>
+        <h1> Welcome </h1>
     </div>
-    <div class="parent">
-        <input class="username" placeholder="Username"><br><br>
-    </div>
-    <div class="parent">
-        <input class="roomId" placeholder="Room ID"><br><br>
-    </div>
-    <div class="parent">
-        <button class="button"> Join </button>
-    </div>
-    <script src="landing.js"></script>
+    <form action="/submit" method="post">
+        <div class="parent">
+            <input class="input" placeholder="Username" name="username" required><br><br>
+        </div>
+        <div class="parent">
+            <input class="input" placeholder="Room ID" name="roomId" required><br><br>
+        </div>
+        <div class="parent">
+            <button class="button" type="submit" > Join </button>
+        </div>
+    </form>
 </body>
 </html>

@@ -2,6 +2,7 @@ const express = require("express");
 const WebSocket = require("ws");
 const path = require("path");
 const fs = require("fs");
+const { type } = require("os");
 const app = express();
 const port = 5090;
 const wss = new WebSocket.WebSocketServer({port: 2021});
@@ -10,22 +11,36 @@ const clientData = new Array();
 const clients = new Set();
 
 app.use(express.static(path.join(__dirname, "../frontend/")));
-app.use(express.json());
+app.use(express.urlencoded());
 
 app.get('/landing', (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/landing.html"));
 });
 
-app.post('/landing', (req, res) => {
+app.post('/submit', (req, res) => {
     const data = req.body;
     if (data.username && data.roomId) {
-        res.redirect('/rooms');
-        clientData.push({username: data.username, roomId: data.roomId});
+        res.redirect(`/rooms?username=${data.username}&roomId=${data.roomId}`);
+    }
+    else {
+        console.log("[!] null username or roomId");
+        res.status(400).send('<h1>Username and roomId are required</h1>');
     }
 });
 
 app.get('/rooms', (req, res) => {
-    console.log('/rooms');
+    const {username, roomId} = req.query;
+    if (username && roomId) {
+        res.sendFile(path.join(__dirname, "../frontend/chat.html"));
+        const newClient = {
+            clientUsername: username,
+            clientRoomId: roomId,
+        }
+        clientData.push(newClient);
+    }
+    else {
+        res.status(400).send('<h1>Username and roomId are required</h1>');
+    }
 });
 
 function writeToJson(path, data) {
@@ -37,8 +52,8 @@ function writeToJson(path, data) {
 wss.on('connection', (socket) => {
     clients.add(socket);
     const lastClient = clientData[clientData.length - 1];
-    socket['username'] = lastClient.username;
-    socket['roomId'] = lastClient.roomId;
+    socket['username'] = lastClient.clientUsername;
+    socket['roomId'] = lastClient.clientRoomId;
     console.log(`${socket.username} connected to '${socket.roomId}' room`);
     socket.send(JSON.stringify({username: socket.username, roomId: socket.roomId}));
 

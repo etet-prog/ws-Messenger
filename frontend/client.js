@@ -6,7 +6,6 @@ const socket = new WebSocket('ws://127.0.0.1:2021');
 socket.onopen = () => {
     leave.addEventListener("click", () => {
         socket.close();
-        window.location.href = "http://127.0.0.1:5090/landing";
     });
 };
 socket.onmessage = (msg) => {
