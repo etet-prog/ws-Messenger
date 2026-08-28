@@ -1,3 +1,4 @@
+const title = document.querySelector("#title");
 const textInput = document.querySelector(".text");
 const leave = document.querySelector(".leave");
 const send = document.querySelector(".send");
@@ -15,6 +16,7 @@ socket.onmessage = (msg) => {
     }
     else if (parsed.username && parsed.roomId) { 
         console.log(`Username: ${parsed.username} | Room: ${parsed.roomId}`);
+        title.textContent = `WsChat | ${parsed.roomId}`; 
     }
 };
 
