@@ -36,6 +36,7 @@ app.get('/rooms', (req, res) => {
         const newClient = {
             username: user,
             roomId: room,
+            owned: false
         }
         CLIENT_DATA.push(newClient);
     }
@@ -47,23 +48,27 @@ app.get('/rooms', (req, res) => {
 wss.on('connection', (socket) => {
     SOCKETS.add(socket);
     const lastClient = CLIENT_DATA[CLIENT_DATA.length - 1];
-    socket['username'] = lastClient.username;
-    socket['roomId'] = lastClient.roomId;
-    console.log(`${socket.username} connected to '${socket.roomId}' room`);
-    socket.send(JSON.stringify({username: socket.username, roomId: socket.roomId}));
-
+    if (!lastClient.owned) {
+        socket['username'] = lastClient.username;
+        socket['roomId'] = lastClient.roomId;
+        lastClient.owned = true;
+        console.log(`${socket.username} connected to '${socket.roomId}' room`);
+        socket.send(JSON.stringify({username: socket.username, roomId: socket.roomId}));
+    }
+    else {
+        socket.close();
+        console.log('[!] Someone was trying to connect without a username or roomId');
+    }
     socket.on("message", (data) => {
         try {
             const parsedData = JSON.parse(data.toString());
             if (parsedData.msg) {
-                if (socket.username && socket.roomId) {
-                    SOCKETS.forEach(client => {
-                        if (client !== socket && client.roomId === socket.roomId && client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify({msg: parsedData.msg, username: socket.username}));
-                        } 
-                    });
-                    console.log(`(${socket.roomId}) ${socket.username}: ${parsedData.msg}`);
-                }
+                SOCKETS.forEach(client => {
+                    if (client !== socket && client.roomId === socket.roomId && client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({msg: parsedData.msg, username: socket.username}));
+                    } 
+                });
+                console.log(`(${socket.roomId}) ${socket.username}: ${parsedData.msg}`);
             }
         }
         catch (err) {
@@ -72,7 +77,12 @@ wss.on('connection', (socket) => {
     });
 
     socket.on('close', () => {
-        console.log(`${socket.username} disconnected from '${socket.roomId}'`);
+        if (socket.username && socket.roomId) {
+            console.log(`${socket.username} disconnected from '${socket.roomId}'`);
+            for (let client of CLIENT_DATA) {
+                if (client.username === socket.username && client.roomId === socket.roomId) CLIENT_DATA.splice(client, 1);
+            }
+        }
         SOCKETS.delete(socket);
     });
 });
