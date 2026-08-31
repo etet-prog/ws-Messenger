@@ -7,19 +7,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="parent">
-        <h1> Welcome </h1>
+    <div class="parent">  
+        <div class="center">
+            <h1 class="heading"> Welcome! </h1>
+        </div>
+        <form action="/submit" method="post">
+            <div class="center">
+                <input class="input" id="usernameInp" placeholder="Username" name="username" required><br><br>
+            </div>
+            <div class="center">
+                <input class="input" id="roomInp" placeholder="Room ID" name="roomId" required><br><br>
+            </div>
+            <div class="center">
+                <button class="button" type="submit"> Join </button>
+            </div>
+        </form>
     </div>
-    <form action="/submit" method="post">
-        <div class="parent">
-            <input class="input" id="usernameInp" placeholder="Username" name="username" required><br><br>
-        </div>
-        <div class="parent">
-            <input class="input" id="roomInp" placeholder="Room ID" name="roomId" required><br><br>
-        </div>
-        <div class="parent">
-            <button class="button" type="submit"> Join </button>
-        </div>
-    </form>
 </body>
 </html>

@@ -4,8 +4,8 @@ const path = require("path");
 const app = express();
 const wss = new WebSocket.WebSocketServer({port: 2021});
 const PORT = 5090;
-const CLIENT_DATA = new Array();
-const SOCKETS = new Set();
+const socketsData = new Array(); 
+const sockets = new Set();
 
 app.use(express.static(path.join(__dirname, "../frontend/")));
 app.use(express.urlencoded());
@@ -32,13 +32,18 @@ app.post('/submit', (req, res) => {
 app.get('/rooms', (req, res) => {
     const {user, room} = req.query;
     if (user && room) {
+        for (let socket of socketsData) {
+            if (socket.username == user && socket.roomId == room) {
+                return res.send('this user is already used!');
+            }
+        }
         res.sendFile(path.join(__dirname, "../frontend/socket.html"));
-        const newClient = {
+        const newSocket = {
             username: user,
             roomId: room,
             owned: false
         }
-        CLIENT_DATA.push(newClient);
+        socketsData.push(newSocket);
     }
     else {
         res.status(400).redirect('/landing');
@@ -46,8 +51,8 @@ app.get('/rooms', (req, res) => {
 });
 
 wss.on('connection', (socket) => {
-    SOCKETS.add(socket);
-    const lastClient = CLIENT_DATA[CLIENT_DATA.length - 1];
+    sockets.add(socket);
+    const lastClient = socketsData[socketsData.length - 1];
     if (!lastClient.owned) {
         socket['username'] = lastClient.username;
         socket['roomId'] = lastClient.roomId;
@@ -63,7 +68,7 @@ wss.on('connection', (socket) => {
         try {
             const parsedData = JSON.parse(data.toString());
             if (parsedData.msg) {
-                SOCKETS.forEach(client => {
+                sockets.forEach(client => {
                     if (client !== socket && client.roomId === socket.roomId && client.readyState === WebSocket.OPEN) {
                         client.send(JSON.stringify({msg: parsedData.msg, username: socket.username}));
                     } 
@@ -79,11 +84,13 @@ wss.on('connection', (socket) => {
     socket.on('close', () => {
         if (socket.username && socket.roomId) {
             console.log(`${socket.username} disconnected from '${socket.roomId}'`);
-            for (let client of CLIENT_DATA) {
-                if (client.username === socket.username && client.roomId === socket.roomId) CLIENT_DATA.splice(client, 1);
+            for (let client = 0; client < socketsData.length; client++) {
+                if (socketsData[client].username === socket.username && socketsData[client].roomId === socket.roomId) {
+                    socketsData.splice(client, 1);
+                };
             }
         }
-        SOCKETS.delete(socket);
+        sockets.delete(socket);
     });
 });
 
