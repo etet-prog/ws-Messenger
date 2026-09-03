@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <a class="leave" href="/landing"> Leave </a><br><br>
-    <input class="text" placeholder="Write a text...">
-    <button class="send"> Send </button>
-
+    <a id="leave" href="/landing"> Leave </a><br><br>
+    <div class="center">
+        <div id="messagesSection"></div>
+    </div>
+    <div class="center">
+        <input class="sendSection" id="text" placeholder="Write a text...">
+        <a class="sendSection" id="send"> <img src="images/send.svg" id="sendIcon"> </a>
+    </div>
     <script src="socket.js"></script> 
 </body>
 </html>

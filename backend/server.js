@@ -33,8 +33,8 @@ app.get('/rooms', (req, res) => {
     const {user, room} = req.query;
     if (user && room) {
         for (let socket of socketsData) {
-            if (socket.username == user && socket.roomId == room) {
-                return res.send('this user is already used!');
+            if (socket.username === user && socket.roomId === room) {
+                return res.send(`<h1> The ${user} has already joined the ${room}</h1>`);
             }
         }
         res.sendFile(path.join(__dirname, "../frontend/socket.html"));
