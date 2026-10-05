@@ -1,22 +1,25 @@
 const title = document.querySelector("#title");
-const messagesSection = document.querySelector("#messagesSection");
+const messageSection = document.querySelector("#message-section");
 const textInput = document.querySelector("#text");
-const leave = document.querySelector("#leave");
-const send = document.querySelector("#send");
+const leave = document.querySelector("#leave-button");
+const send = document.querySelector("#send-button");
 const socket = new WebSocket('ws://127.0.0.1:2021');
 
-function meChatBubble(message) {
+function rightChatBubble(message) {
     const bubble = document.createElement("div");
-    bubble.className = 'meChatBubble';
+    bubble.className = "chatBubble"
+    bubble.classList.add("right-chatBubble");
+
     bubble.textContent = message;
-    messagesSection.appendChild(bubble);
-    messagesSection.scrollTop = messagesSection.scrollHeight;
+    messageSection.appendChild(bubble);
+    messageSection.scrollTop = messageSection.scrollHeight;
 }
 
-function otherChatBubble(message, username) {
+function leftChatBubble(message, username) {
     const bubble = document.createElement("div");
-    bubble.className = "otherChatBubble";
-    
+    bubble.className = "chatBubble";
+    bubble.classList.add("left-chatBubble");
+
     const newUsername = document.createElement("p");
     newUsername.className = "username";
     newUsername.textContent = username;
@@ -25,17 +28,17 @@ function otherChatBubble(message, username) {
     newMessage.className = "messageLeft";
     newMessage.textContent = message;
 
-    messagesSection.appendChild(newUsername);
+    messageSection.appendChild(newUsername);
     bubble.appendChild(newMessage);
-    messagesSection.appendChild(bubble);
-    messagesSection.scrollTop = messagesSection.scrollHeight;
+    messageSection.appendChild(bubble);
+    messageSection.scrollTop = messageSection.scrollHeight;
 }
 
 function sendMessage() {
     if (textInput.value) {
         const newMsg = {msg: textInput.value.trim()};
         socket.send(JSON.stringify(newMsg));
-        meChatBubble(newMsg.msg);
+        rightChatBubble(newMsg.msg);
         textInput.value = "";   
     };
 }
@@ -48,7 +51,7 @@ socket.onopen = () => {
 socket.onmessage = (msg) => {
     const parsed = JSON.parse(msg.data);
     if (parsed.msg) {
-        otherChatBubble(parsed.msg, parsed.username);
+        leftChatBubble(parsed.msg, parsed.username);
     }
     else if (parsed.username && parsed.roomId) { 
         console.log(`Username: ${parsed.username} | Room: ${parsed.roomId}`);

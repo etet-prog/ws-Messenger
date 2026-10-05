@@ -1,5 +1,6 @@
 body {
     background-color: #17181D;
+    margin: 0;
 }
 
 .center {
@@ -9,7 +10,7 @@ body {
 }
 
 /* rooms Page */
-#messagesSection {
+#message-section {
     background-color: #1C1F28;
     height: 80vh;
     width: 100vh;
@@ -23,21 +24,21 @@ body {
 }
 
 /* Chrome / Edge / Safari */
-#messagesSection::-webkit-scrollbar {
+#message-section::-webkit-scrollbar {
     width: 8px;
 }
 
-#messagesSection::-webkit-scrollbar-track {
+#message-section::-webkit-scrollbar-track {
     background: #34393C;
     border-radius: 10px;
 }
 
-#messagesSection::-webkit-scrollbar-thumb {
+#message-section::-webkit-scrollbar-thumb {
     background: #4A5158;
     border-radius: 10px;
 }
 
-#messagesSection::-webkit-scrollbar-thumb:hover {
+#message-section::-webkit-scrollbar-thumb:hover {
     background: #5c646c;
 }
 
@@ -47,34 +48,28 @@ body {
     margin-left: 8px;
     margin-bottom: 4px;
 }
-.meChatBubble {
+
+.chatBubble {
     width: fit-content;
     max-width: 80%;
-    background: #1DB5C1;
     color: white;
     padding: 10px 14px;
     margin: 8px 0 8px auto;
-    margin-right: 2%;
     border-radius: 16px;
     white-space: pre-wrap;  
     overflow-wrap: break-word;
     word-break: break-word;
 }
-.otherChatBubble {
-    width: fit-content;
-    max-width: 80%;
+.right-chatBubble {
+    background: #1DB5C1;
+    margin-right: 2%;
+}
+.left-chatBubble {
     background: #242833;
-    color: white;
-    padding: 10px 14px;
-    margin: 8px 0 8px 0;
     margin-left: 2%;
-    border-radius: 16px;
-    white-space: pre-wrap;  
-    overflow-wrap: break-word;
-    word-break: break-word;
 }
 
-#sendSection {
+#text-input {
     position: fixed;
     bottom: 20px;
     z-index: 9999;
@@ -91,7 +86,7 @@ body {
     outline: none;
     margin-top: 2vh;
 }
-#send {
+#send-button {
     background-color: #1C1F28;
     width: 7vh;
     height: 6vh;
@@ -100,17 +95,15 @@ body {
     margin-left: 1vh;
     margin-top: 2vh;
 }
-#sendIcon {
+.icon {
     width: 7vh;
     height: 5.5vh;
-    padding: 4%;
+    margin-left: 2%;
 }
-#send:hover {
-    opacity: 0.8;
-}
-#send:active {
-    opacity: 100%;
-}
+.leave-icon { margin-left: 0 }
+
+#send-button:hover { opacity: 0.8 }
+#send-button:active { opacity: 100% }
 
 /* landing Page */
 .heading {
@@ -138,9 +131,5 @@ body {
     font-size: medium;
     margin: 1vh;
 }
-.button:hover {
-    opacity: 0.8;
-}
-.button:active {
-    opacity: 100%;
-}
+.button:hover { opacity: 0.8 }
+.button:active { opacity: 100 }
